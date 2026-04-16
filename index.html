@@ -20,10 +20,8 @@
       margin: auto;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
-    h1 {
-      color: #ff4b5c;
-    }
-    input, button {
+    h1 { color: #ff4b5c; }
+    input, select, button {
       width: 90%;
       padding: 10px;
       margin: 10px 0;
@@ -36,9 +34,7 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
-      background: #e8434f;
-    }
+    button:hover { background: #e8434f; }
   </style>
 </head>
 <body>
@@ -52,8 +48,21 @@
     <h3>Confirma tu asistencia</h3>
 
     <form id="form">
+      <input type="email" id="gmail" placeholder="Tu Gmail" required>
       <input type="text" id="nombre" placeholder="Tu nombre" required>
-      <input type="number" id="personas" placeholder="Número de personas" required>
+      
+      <select id="confirmacion" required>
+        <option value="">¿Confirmas asistencia?</option>
+        <option value="Sí">Sí</option>
+        <option value="No">No</option>
+      </select>
+
+      <select id="comida" required>
+        <option value="">¿Vas a comer?</option>
+        <option value="Sí">Sí</option>
+        <option value="No">No</option>
+      </select>
+
       <button type="submit">Confirmar asistencia</button>
     </form>
 
@@ -61,15 +70,17 @@
   </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec"; // Reemplaza con tu URL
+    const scriptURL = "TU_SCRIPT_ID_AQUI"; // reemplaza con tu URL de Apps Script
 
     const form = document.getElementById('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
 
       const data = {
+        gmail: document.getElementById('gmail').value,
         nombre: document.getElementById('nombre').value,
-        personas: document.getElementById('personas').value
+        confirmacion: document.getElementById('confirmacion').value,
+        comida: document.getElementById('comida').value
       };
 
       fetch(scriptURL, {
@@ -77,15 +88,14 @@
         body: JSON.stringify(data),
         headers: { 'Content-Type': 'application/json' }
       })
-      .then(response => {
+      .then(() => {
         document.getElementById('mensaje').innerText = "¡Gracias por confirmar!";
         form.reset();
       })
-      .catch(error => {
+      .catch(() => {
         document.getElementById('mensaje').innerText = "Error al enviar";
       });
     });
   </script>
 </body>
 </html>
-
