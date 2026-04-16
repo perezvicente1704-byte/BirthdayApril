@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎉 Invitación PRO+</title>
+<title>🎉 Invitación Alejo+</title>
 <style>
 body{font-family:Arial;background:linear-gradient(135deg,#ff9a9e,#fad0c4);text-align:center}
 .card{background:white;border-radius:20px;padding:25px;max-width:520px;margin:auto}
@@ -122,34 +122,30 @@ formEl.onsubmit = async (e) => {
 
  let checksSel = [...checks].filter(c => c.checked).map(c => c.value).join(",");
 
- try {
-   const formData = new FormData();
-formData.append("nombre", nombre);
-formData.append("confirmacion", confirmacionVal);
-formData.append("comida", comidaVal);
-formData.append("tragos", checksSel);
-
-await fetch(url, {
+ // envío simplificado (compatible 100% con Apps Script)
+fetch(url, {
   method: "POST",
-  body: formData
+  mode: "no-cors",
+  body: new URLSearchParams({
+    nombre,
+    confirmacion: confirmacionVal,
+    comida: comidaVal,
+    tragos: checksSel
+  })
 });
 
-   msgEl.innerText = "✅ Guardado correctamente";
+msgEl.innerText = "✅ Enviado (verifica en Excel)";
 
-   if (comidaVal === "Sí") {
-     let token = btoa(nombre + Date.now());
-     let link = `${url}?qr=${token}`;
-     let linkEl = document.getElementById("linkComida");
-     linkEl.href = link;
-     linkEl.innerText = "🍔 Reclamar comida";
-   }
+if (comidaVal === "Sí") {
+  let token = btoa(nombre + Date.now());
+  let link = `${url}?qr=${token}`;
+  let linkEl = document.getElementById("linkComida");
+  linkEl.href = link;
+  linkEl.innerText = "🍔 Reclamar comida";
+}
 
-   formEl.reset();
-   setTimeout(cargar, 2000);
-
- } catch (err) {
-   msgEl.innerText = "❌ Error real al enviar";
- }
+formEl.reset();
+setTimeout(cargar, 2000);
 };
 </script>
 </body>
