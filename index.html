@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎉 Invitación PRO</title>
+  <title>🎉 Invitación PRO+</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,22 +35,16 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover { background: #e8434f; }
     iframe { width: 100%; border-radius: 10px; margin-top: 15px; }
+    ul { text-align:left; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>🎂 ¡Estás Invitado! 🎂</h1>
-    <p>Celebración de cumpleaños</p>
-    <p><strong>📅 Fecha:</strong> 17 de Abril</p>
-    <p><strong>⏰ Hora:</strong> 10:00 PM</p>
+    <p><strong>📅 17 Abril</strong> - <strong>10:00 PM</strong></p>
 
     <div class="countdown" id="countdown"></div>
-
-    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Cumpleaños&dates=20260417T220000/20260418T020000" target="_blank">
-      <button>📅 Agregar a Google Calendar</button>
-    </a>
 
     <h3>Confirma tu asistencia</h3>
 
@@ -58,13 +52,13 @@
       <input type="text" id="nombre" placeholder="Tu nombre" required>
 
       <select id="confirmacion" required>
-        <option value="">¿Confirmas asistencia?</option>
+        <option value="">¿Confirmas?</option>
         <option value="Sí">Sí</option>
         <option value="No">No</option>
       </select>
 
       <select id="comida" required>
-        <option value="">¿Vas a comer?</option>
+        <option value="">¿Comes?</option>
         <option value="Sí">Sí</option>
         <option value="No">No</option>
       </select>
@@ -74,8 +68,20 @@
 
     <p id="mensaje"></p>
 
+    <h3>📊 Estadísticas</h3>
+    <p id="contador"></p>
+
+    <h3>🎉 Asisten</h3>
+    <ul id="si"></ul>
+
+    <h3>❌ No asisten</h3>
+    <ul id="no"></ul>
+
+    <h3>🍽️ Comida</h3>
+    <p id="comidaStats"></p>
+
     <h3>📍 Ubicación</h3>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d402.0030296853956!2d-76.35312632485807!3d-13.063882004115543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1ses!2spe!4v1776376138829!5m2!1ses!2spe" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d402.0030296853956!2d-76.35312632485807!3d-13.063882004115543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1ses!2spe!4v1776376138829!5m2!1ses!2spe" height="200"></iframe>
   </div>
 
   <script>
@@ -86,11 +92,9 @@
     setInterval(() => {
       const now = new Date().getTime();
       const diff = eventDate - now;
-
       const d = Math.floor(diff / (1000*60*60*24));
       const h = Math.floor((diff % (1000*60*60*24))/(1000*60*60));
       const m = Math.floor((diff % (1000*60*60))/(1000*60));
-
       document.getElementById("countdown").innerText = `⏳ ${d}d ${h}h ${m}m`;
     }, 1000);
 
@@ -106,26 +110,51 @@
 
       fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
+        mode: 'no-cors',
+        body: JSON.stringify(data)
       })
       .then(() => {
-        document.getElementById('mensaje').innerText = "✅ Confirmado, nos vemos!";
+        document.getElementById('mensaje').innerText = "✅ Confirmado";
         form.reset();
+        setTimeout(cargarDatos, 2000);
       })
       .catch(() => {
-        document.getElementById('mensaje').innerText = "❌ Error al enviar";
+        document.getElementById('mensaje').innerText = "❌ Error";
       });
     });
-  </script>
-  <h3>🎉 Invitados confirmados</h3>
-  <ul id="lista"></ul>
 
-  <script>
-    const sheetURL = "https://script.google.com/macros/s/AKfycbxEiFsLa7WT6XL5QUFBv1meFNhip7nUXIRnzp6wxOMHRQRfM2bv74kX1OBOqbet7F4/exec";
-
-    async function cargarInvitados() {
+    async function cargarDatos() {
       try {
-        const res = await fetch(sheetURL);
-        const data
+        const res = await fetch(scriptURL);
+        const data = await res.json();
+
+        let si = 0, no = 0, comen = 0;
+        document.getElementById("si").innerHTML = "";
+        document.getElementById("no").innerHTML = "";
+
+        data.forEach(p => {
+          if (p.confirmacion === "Sí") {
+            si++;
+            if (p.comida === "Sí") comen++;
+            const li = `<li>${p.nombre}</li>`;
+            document.getElementById("si").innerHTML += li;
+          } else {
+            no++;
+            const li = `<li>${p.nombre}</li>`;
+            document.getElementById("no").innerHTML += li;
+          }
+        });
+
+        document.getElementById("contador").innerText = `Asisten: ${si} | No: ${no}`;
+        document.getElementById("comidaStats").innerText = `Comen: ${comen}`;
+
+      } catch(e) {
+        console.log(e);
+      }
+    }
+
+    cargarDatos();
+    setInterval(cargarDatos, 5000);
+  </script>
+</body>
 </html>
