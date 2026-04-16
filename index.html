@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎉 Invitación Alejo</title>
+<title>🎉 Invitación</title>
 
 <style>
 body {
@@ -41,8 +41,9 @@ input, select, button {
   cursor: pointer;
 }
 
-ul {
-  text-align: left;
+img {
+  margin-top: 10px;
+  border-radius: 10px;
 }
 </style>
 </head>
@@ -52,6 +53,9 @@ ul {
 <div class="card">
   <h1>🎂 Invitación</h1>
   <p><b>17 Abril - 10 PM</b></p>
+
+  <!-- ⏳ CONTADOR -->
+  <h2 id="countdown"></h2>
 
   <form id="form">
     <input id="nombre" placeholder="Tu nombre" required>
@@ -91,7 +95,30 @@ ul {
 <script>
 const url = "https://script.google.com/macros/s/AKfycbx-Q_BCR--_yqQ7L1qQPyfTbqm8bIg603LC6SC6dyR81K7383wY_qZggvZWMoEMesOl/exec";
 
-// 🔥 limitar a máximo 3 tragos
+
+// ⏳ CONTADOR
+const countdownEl = document.getElementById("countdown");
+const targetDate = new Date("April 17, 2026 22:00:00").getTime();
+
+setInterval(() => {
+  const now = new Date().getTime();
+  const diff = targetDate - now;
+
+  if (diff <= 0) {
+    countdownEl.innerText = "🎉 ¡La fiesta empezó!";
+    return;
+  }
+
+  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const m = Math.floor((diff / (1000 * 60)) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+
+  countdownEl.innerText = `⏳ ${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
+
+
+// 🍹 LIMITE DE 3 TRAGOS
 const checks = document.querySelectorAll("input[type=checkbox]");
 checks.forEach(c => {
   c.addEventListener("change", () => {
@@ -103,7 +130,8 @@ checks.forEach(c => {
   });
 });
 
-// 🚀 envío del formulario (CORREGIDO)
+
+// 🚀 ENVÍO FORMULARIO
 const form = document.getElementById("form");
 
 form.addEventListener("submit", function(e) {
@@ -117,6 +145,7 @@ form.addEventListener("submit", function(e) {
     .map(c => c.value)
     .join(",");
 
+  // enviar a Google Sheets
   fetch(url, {
     method: "POST",
     mode: "no-cors",
@@ -128,7 +157,21 @@ form.addEventListener("submit", function(e) {
     })
   });
 
-  document.getElementById("msg").innerText = "✅ Confirmación enviada";
+  // generar QR solo si come
+  let qrHTML = "";
+  if (comida === "Sí") {
+    const token = btoa(nombre + Date.now());
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${token}`;
+
+    qrHTML = `
+      <br><b>🍔 Tu QR para comida:</b><br>
+      <img src="${qrUrl}">
+      <p>Guárdalo para reclamar tu comida</p>
+    `;
+  }
+
+  document.getElementById("msg").innerHTML =
+    "✅ Confirmación enviada" + qrHTML;
 
   form.reset();
 });
