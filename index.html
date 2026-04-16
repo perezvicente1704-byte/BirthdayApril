@@ -3,64 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎉 Invitación PRO+</title>
+<title>🎉 Invitación Alejo</title>
+
 <style>
-body{font-family:Arial;background:linear-gradient(135deg,#ff9a9e,#fad0c4);text-align:center}
-.card{background:white;border-radius:20px;padding:25px;max-width:520px;margin:auto}
-input,select,button{width:90%;padding:10px;margin:6px;border-radius:10px}
-.drinks{display:grid;grid-template-columns:1fr 1fr;gap:5px;text-align:left}
-.drinks label{background:#f5f5f5;padding:8px;border-radius:8px;cursor:pointer}
-ul{text-align:left}
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+  text-align: center;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  max-width: 500px;
+  margin: auto;
+}
+
+input, select, button {
+  width: 90%;
+  padding: 10px;
+  margin: 6px;
+  border-radius: 10px;
+}
+
+.drinks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  text-align: left;
+}
+
+.drinks label {
+  background: #f5f5f5;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+ul {
+  text-align: left;
+}
 </style>
 </head>
+
 <body>
+
 <div class="card">
-<h1>🎂 Invitación</h1>
-<p><b>17 Abril - 10 PM</b></p>
-<div id="countdown"></div>
+  <h1>🎂 Invitación</h1>
+  <p><b>17 Abril - 10 PM</b></p>
 
-<form id="form">
-<input id="nombre" placeholder="Tu nombre" required>
+  <form id="form">
+    <input id="nombre" placeholder="Tu nombre" required>
 
-<select id="confirmacion" required>
-<option value="">¿Confirmas?</option>
-<option>Sí</option>
-<option>No</option>
-</select>
+    <select id="confirmacion" required>
+      <option value="">¿Confirmas?</option>
+      <option>Sí</option>
+      <option>No</option>
+    </select>
 
-<select id="comida" required>
-<option value="">¿Comes?</option>
-<option value="Sí">Sí</option>
-<option value="No">No</option>
-</select>
+    <select id="comida" required>
+      <option value="">¿Comes?</option>
+      <option>Sí</option>
+      <option>No</option>
+    </select>
 
-<h4>🍹 Elige máximo 3 tragos</h4>
-<div class="drinks">
-<label><input type="checkbox" value="Ron"> Ron</label>
-<label><input type="checkbox" value="Whisky"> Whisky</label>
-<label><input type="checkbox" value="Cerveza"> Cerveza</label>
-<label><input type="checkbox" value="Pisco"> Pisco</label>
-<label><input type="checkbox" value="Gin Tonic"> Gin Tonic</label>
-<label><input type="checkbox" value="Vodka"> Vodka</label>
-<label><input type="checkbox" value="Tequila"> Tequila</label>
-<label><input type="checkbox" value="Vino"> Vino</label>
-<label><input type="checkbox" value="Champagne"> Champagne</label>
-</div>
+    <h4>🍹 Elige máximo 3 tragos</h4>
 
-<button>Confirmar</button>
-</form>
+    <div class="drinks">
+      <label><input type="checkbox" value="Ron"> Ron</label>
+      <label><input type="checkbox" value="Whisky"> Whisky</label>
+      <label><input type="checkbox" value="Cerveza"> Cerveza</label>
+      <label><input type="checkbox" value="Pisco"> Pisco</label>
+      <label><input type="checkbox" value="Gin Tonic"> Gin Tonic</label>
+      <label><input type="checkbox" value="Vodka"> Vodka</label>
+      <label><input type="checkbox" value="Tequila"> Tequila</label>
+      <label><input type="checkbox" value="Vino"> Vino</label>
+      <label><input type="checkbox" value="Champagne"> Champagne</label>
+    </div>
 
-<p id="msg"></p>
-<a id="linkComida" target="_blank"></a>
+    <button type="submit">Confirmar</button>
+  </form>
 
-<h3>🍹 Ranking</h3>
-<ul id="ranking"></ul>
-
-<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d402.0030296853956!2d-76.35312632485807!3d-13.063882004115543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1ses!2spe!4v1776376138829!5m2!1ses!2spe" height="200"></iframe>
+  <p id="msg"></p>
 </div>
 
 <script>
-const url="https://script.google.com/macros/s/AKfycbx-Q_BCR--_yqQ7L1qQPyfTbqm8bIg603LC6SC6dyR81K7383wY_qZggvZWMoEMesOl/exec";
+const url = "https://script.google.com/macros/s/AKfycbx-Q_BCR--_yqQ7L1qQPyfTbqm8bIg603LC6SC6dyR81K7383wY_qZggvZWMoEMesOl/exec";
+
+// 🔥 limitar a máximo 3 tragos
+const checks = document.querySelectorAll("input[type=checkbox]");
+checks.forEach(c => {
+  c.addEventListener("change", () => {
+    let seleccionados = [...checks].filter(x => x.checked);
+    if (seleccionados.length > 3) {
+      c.checked = false;
+      alert("Máximo 3 tragos");
+    }
+  });
+});
+
+// 🚀 envío del formulario (CORREGIDO)
+const form = document.getElementById("form");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nombre = document.getElementById("nombre").value;
+  const confirmacion = document.getElementById("confirmacion").value;
+  const comida = document.getElementById("comida").value;
+
+  const tragos = [...document.querySelectorAll("input[type=checkbox]:checked")]
+    .map(c => c.value)
+    .join(",");
+
+  fetch(url, {
+    method: "POST",
+    mode: "no-cors",
+    body: new URLSearchParams({
+      nombre: nombre,
+      confirmacion: confirmacion,
+      comida: comida,
+      tragos: tragos
+    })
+  });
+
+  document.getElementById("msg").innerText = "✅ Confirmación enviada";
+
+  form.reset();
+});
 </script>
+
 </body>
 </html>
