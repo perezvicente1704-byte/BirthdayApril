@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación de Cumpleaños</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      text-align: center;
+      color: #333;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    h1 {
+      color: #ff4b5c;
+    }
+    input, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #ff4b5c;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #e8434f;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎉 ¡Estás Invitado! 🎉</h1>
+    <p>Ven a celebrar mi cumpleaños</p>
+    <p><strong>Fecha:</strong> 20 de Mayo</p>
+    <p><strong>Hora:</strong> 7:00 PM</p>
+    <p><strong>Lugar:</strong> Mi casa</p>
+
+    <h3>Confirma tu asistencia</h3>
+
+    <form id="form">
+      <input type="text" id="nombre" placeholder="Tu nombre" required>
+      <input type="number" id="personas" placeholder="Número de personas" required>
+      <button type="submit">Confirmar asistencia</button>
+    </form>
+
+    <p id="mensaje"></p>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec"; // Reemplaza con tu URL
+
+    const form = document.getElementById('form');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const data = {
+        nombre: document.getElementById('nombre').value,
+        personas: document.getElementById('personas').value
+      };
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => {
+        document.getElementById('mensaje').innerText = "¡Gracias por confirmar!";
+        form.reset();
+      })
+      .catch(error => {
+        document.getElementById('mensaje').innerText = "Error al enviar";
+      });
+    });
+  </script>
+</body>
+</html>
 
