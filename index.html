@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎉 Invitación Alejo</title>
+<title>🎉 Invitación PRO+</title>
 <style>
 body{font-family:Arial;background:linear-gradient(135deg,#ff9a9e,#fad0c4);text-align:center}
 .card{background:white;border-radius:20px;padding:25px;max-width:520px;margin:auto}
@@ -60,7 +60,7 @@ ul{text-align:left}
 </div>
 
 <script>
-const url="https://script.google.com/macros/s/AKfycbwKKQEJXsv08jFC3PJjOKAtEBPXd92CyCjPBXJAodWXs2Bk9bH7NWIXyIJcPzQLbBL5/exec";
+const url="https://script.google.com/macros/s/AKfycbxEiFsLa7WT6XL5QUFBv1meFNhip7nUXIRnzp6wxOMHRQRfM2bv74kX1OBOqbet7F4/exec";
 
 // limitar a 3 checkboxes
 const checks=document.querySelectorAll("input[type=checkbox]");
@@ -105,32 +105,50 @@ document.getElementById("ranking").innerHTML=html;
 setInterval(cargar,5000);
 cargar();
 
-form.onsubmit=e=>{
+const formEl = document.getElementById("form");
+
+formEl.onsubmit = async (e) => {
  e.preventDefault();
- let nombre=nombreInput.value||document.getElementById("nombre").value;
- let comida=document.getElementById("comida").value;
 
- if(cache.some(p=>p.nombre.toLowerCase()===nombre.toLowerCase())){
- msg.innerText="⚠️ Ya existe";
- return;
+ const nombre = document.getElementById("nombre").value;
+ const confirmacionVal = document.getElementById("confirmacion").value;
+ const comidaVal = document.getElementById("comida").value;
+ const msgEl = document.getElementById("msg");
+
+ if (cache.some(p => p.nombre.toLowerCase() === nombre.toLowerCase())) {
+   msgEl.innerText = "⚠️ Ya existe";
+   return;
  }
 
- let checksSel=[...checks].filter(c=>c.checked).map(c=>c.value).join(",");
+ let checksSel = [...checks].filter(c => c.checked).map(c => c.value).join(",");
 
- fetch(url,{method:"POST",mode:"no-cors",
- body:JSON.stringify({nombre,confirmacion:confirmacion.value,comida,tragos:checksSel})});
+ try {
+   await fetch(url, {
+     method: "POST",
+     body: JSON.stringify({
+       nombre,
+       confirmacion: confirmacionVal,
+       comida: comidaVal,
+       tragos: checksSel
+     })
+   });
 
- msg.innerText="✅ Guardado";
+   msgEl.innerText = "✅ Guardado correctamente";
 
- if(comida==="Sí"){
- let token=btoa(nombre+Date.now());
- let link=`https://tu-evento.com/qr?id=${token}`;
- linkComida.href=link;
- linkComida.innerText="🍔 Reclamar comida";
+   if (comidaVal === "Sí") {
+     let token = btoa(nombre + Date.now());
+     let link = `${url}?qr=${token}`;
+     let linkEl = document.getElementById("linkComida");
+     linkEl.href = link;
+     linkEl.innerText = "🍔 Reclamar comida";
+   }
+
+   formEl.reset();
+   setTimeout(cargar, 2000);
+
+ } catch (err) {
+   msgEl.innerText = "❌ Error real al enviar";
  }
-
- form.reset();
- setTimeout(cargar,2000);
 };
 </script>
 </body>
