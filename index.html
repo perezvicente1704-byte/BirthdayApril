@@ -123,15 +123,16 @@ formEl.onsubmit = async (e) => {
  let checksSel = [...checks].filter(c => c.checked).map(c => c.value).join(",");
 
  try {
-   await fetch(url, {
-     method: "POST",
-     body: JSON.stringify({
-       nombre,
-       confirmacion: confirmacionVal,
-       comida: comidaVal,
-       tragos: checksSel
-     })
-   });
+   const formData = new FormData();
+formData.append("nombre", nombre);
+formData.append("confirmacion", confirmacionVal);
+formData.append("comida", comidaVal);
+formData.append("tragos", checksSel);
+
+await fetch(url, {
+  method: "POST",
+  body: formData
+});
 
    msgEl.innerText = "✅ Guardado correctamente";
 
