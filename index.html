@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎉 Invitación</title>
+<title>a🎉 Invitación</title>
 
 <style>
 body {
@@ -145,35 +145,35 @@ form.addEventListener("submit", function(e) {
     .map(c => c.value)
     .join(",");
 
-  // enviar a Google Sheets
-  fetch(url, {
-    method: "POST",
-    mode: "no-cors",
-    body: new URLSearchParams({
-      nombre: nombre,
-      confirmacion: confirmacion,
-      comida: comida,
-      tragos: tragos
-    })
-  });
+ // enviar y recibir token real
+fetch(url, {
+  method: "POST",
+  body: new URLSearchParams({
+    nombre,
+    confirmacion,
+    comida,
+    tragos
+  })
+})
+.then(res => res.json())
+.then(data => {
 
-  // generar QR solo si come
   let qrHTML = "";
+
   if (comida === "Sí") {
-    const token = btoa(nombre + Date.now());
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${token}`;
+    const link = `${url}?token=${data.token}`;
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link)}`;
 
     qrHTML = `
-      <br><b>🍔 Tu QR para comida:</b><br>
+      <br><b>🍔 Tu QR válido:</b><br>
       <img src="${qrUrl}">
-      <p>Guárdalo para reclamar tu comida</p>
+      <p>Escanéalo en la entrada</p>
     `;
   }
 
   document.getElementById("msg").innerHTML =
-    "✅ Confirmación enviada" + qrHTML;
-
-  form.reset();
+    "✅ Confirmación registrada" + qrHTML;
 });
 </script>
 
